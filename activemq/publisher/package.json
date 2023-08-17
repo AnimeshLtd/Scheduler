@@ -1,0 +1,12 @@
+{
+  "name": "publisher",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "publish.js",
+  "scripts": {
+    "start": "node publish.js"
+  },
+  "dependencies": {
+    "stompit": "^1.0.0"
+  }
+}

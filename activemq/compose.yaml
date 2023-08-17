@@ -1,0 +1,51 @@
+services:
+  broker:
+    container_name: scheduler-activemq-broker
+    image: symptoma/activemq:latest
+    environment:
+      ACTIVEMQ_DISALLOW_WEBCONSOLE: false
+      ACTIVEMQ_USERNAME: scheduler
+      ACTIVEMQ_PASSWORD: password
+      ACTIVEMQ_WEBADMIN_USERNAME: scheduler
+      ACTIVEMQ_WEBADMIN_PASSWORD: password
+      ACTIVEMQ_ENABLE_SCHEDULER: true
+    ports:
+      - 8161:8161
+      - 61613:61613
+    networks:
+      - activemq
+  publisher:
+    container_name: scheduler-activemq-publisher
+    image: animeshltd/scheduler-activemq-publisher:latest
+    build:
+      context: publisher
+    environment:
+      ACTIVEMQ_HOST: broker
+      ACTIVEMQ_USERNAME: scheduler
+      ACTIVEMQ_PASSWORD: password
+    ports:
+      - 4000:4000
+    networks:
+      - activemq
+    depends_on:
+      - broker
+  subscriber:
+    container_name: scheduler-activemq-subscriber
+    image: animeshltd/scheduler-activemq-subscriber:latest
+    build:
+      context: subscriber
+    environment:
+      ACTIVEMQ_HOST: broker
+      ACTIVEMQ_USERNAME: scheduler
+      ACTIVEMQ_PASSWORD: password
+    ports:
+      - 5000:5000
+    networks:
+      - activemq
+    depends_on:
+      - broker
+      - publisher
+
+networks:
+  activemq:
+    name: activemq
